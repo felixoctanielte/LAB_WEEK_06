@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.lab_week_06.model.CatModel
 import com.example.lab_week_06.model.CatBreed
 import com.example.lab_week_06.model.Gender
+
 class CatViewHolder(
     itemView: View,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val onClickListener: CatAdapter.OnClickListener // gunakan dari CatAdapter
 ) : RecyclerView.ViewHolder(itemView) {
 
     private val nameText: TextView = itemView.findViewById(R.id.cat_name)
@@ -19,14 +21,25 @@ class CatViewHolder(
     private val catImage: ImageView = itemView.findViewById(R.id.cat_photo)
 
     fun bindData(cat: CatModel) {
+        itemView.setOnClickListener {
+            onClickListener.onItemClick(cat)
+        }
+
         nameText.text = cat.name
         bioText.text = cat.biography
-        breedText.text = cat.breed.name
+        breedText.text = when (cat.breed) {
+            CatBreed.AmericanCurl -> "American Curl"
+            CatBreed.BalineseJavanese -> "Balinese-Javanese"
+            CatBreed.ExoticShorthair -> "Exotic Shorthair"
+            else -> "Unknown"
+        }
         genderText.text = when (cat.gender) {
             Gender.Male -> "♂"
             Gender.Female -> "♀"
-            Gender.Unknown -> "?"
+            else -> "?"
         }
+
+        // Pastikan urutannya sesuai dengan definisi di ImageLoader
         imageLoader.loadImage(catImage, cat.imageUrl)
     }
 }
